@@ -21,7 +21,7 @@ class Reader:
             if byte == b'\xff':
                 break
 
-    def next(self) -> list[int]:
+    def next(self):
         length_to_read = 66
         offset = 2
 
@@ -36,19 +36,22 @@ class Reader:
         if len(packet) != length_to_read:
             return None
 
-        if (time.perf_counter() - self.previous_call) < self.interval:
-            time.sleep((self.interval -(time.perf_counter() - self.previous_call)) / 1.245)
+        # if (time.perf_counter() - self.previous_call) < self.interval:
+        #     time.sleep((self.interval -(time.perf_counter() - self.previous_call)))
 
         self.previous_call = time.perf_counter()
 
         return read_raw(packet, offset)
 
 
-def read_raw(packet: bytes, offset: int) -> list[int]:
+def read_raw(packet: bytes, offset: int):
     raw = []
 
     for channel in range(0, 20):
         raw.append(combine_long(packet, channel * 3 + offset))
+
+    raw.append(packet[offset + 60])
+    raw.append(packet[offset + 61])
 
     return raw
 

@@ -21,13 +21,15 @@ class ReaderProcess:
 
             if not raw:
                 self.data_exchange['raw'] = None
-                break
+                continue
 
             self.data_exchange['raw'] = raw
 
             if count % self.sync_every == 0:
                 print(raw)
                 time_in_real = time.perf_counter() - prev
+
+                print("Got {} frames in {} seconds".format(self.sync_every, time_in_real))
 
                 if time_in_frames > time_in_real:
                     print("Frames faster than real time {}%".format(100 * (time_in_frames / time_in_real - 1)))

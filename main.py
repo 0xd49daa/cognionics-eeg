@@ -1,4 +1,4 @@
-from reader import FileEngine, ReaderProcess
+from reader import ReaderProcess, DeviceEngine
 
 # from multiprocessing import Process, Manager
 # concurrent.futures
@@ -14,7 +14,9 @@ if __name__ == '__main__':
     # with Manager() as manager:
     #     data_exchange = manager.dict()
 
-    reader_process = ReaderProcess({}, FileEngine("binary_ivan.dat"))
+
+    device_engine = DeviceEngine()
+    reader_process = ReaderProcess({}, device_engine) # FileEngine("binary_ivan.dat"))
 
     reader_process.run()
         # reader = Process(target=run, args=(data_exchange,))
