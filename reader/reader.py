@@ -16,32 +16,36 @@ class Reader:
         self.interval = 1.0 / freq
 
     def read_until_first_byte(self):
+        count = 0
+
         while True:
             byte = self.engine.read(1)
             if byte == b'\xff':
+                if count > 0:
+                    print("count {}".format(count))
                 break
+            count = count + 1
 
     def next(self):
-        length_to_read = 66
-        offset = 2
-
-        if not self.first_read:
-            self.read_until_first_byte()
-            self.first_read = True
-            length_to_read = 65
-            offset = 1
+        self.read_until_first_byte()
+        self.first_read = True
+        length_to_read = 65
+        offset = 1
 
         packet = self.engine.read(length_to_read)
 
         if len(packet) != length_to_read:
             return None
 
-        # if (time.perf_counter() - self.previous_call) < self.interval:
-        #     time.sleep((self.interval -(time.perf_counter() - self.previous_call)))
+        if (time.perf_counter() - self.previous_call) < self.interval:
+            time.sleep((self.interval -(time.perf_counter() - self.previous_call)))
 
         self.previous_call = time.perf_counter()
 
-        return read_raw(packet, offset)
+        arr = read_raw(packet, offset)
+
+        return arr
+
 
 
 def read_raw(packet: bytes, offset: int):

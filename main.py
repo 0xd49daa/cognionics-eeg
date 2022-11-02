@@ -1,24 +1,32 @@
-from reader import ReaderProcess, DeviceEngine
+from debug.debug import debug_raw_data
+from reader import ReaderProcess, AbstractEngine, EngineType
+from plot import draw_process
+import multiprocessing
+from multiprocessing.managers import SharedMemoryManager
+import numpy as np
+from multiprocessing import Lock
 
-# from multiprocessing import Process, Manager
-# concurrent.futures
-
-# column_names = ['F7', 'Fp1', 'Fp2', 'F8', 'F3', 'Fz', 'F4', 'C3', 'Cz', 'P8', 'P7', 'Pz', 'P4', 'T3', 'P3', 'O1',
-#                 'O2', 'C4', 'T4', 'A2']
-
-# def run():
-#     pass
-
+BUFFER_SIZE = 5000
 
 if __name__ == '__main__':
-    # with Manager() as manager:
-    #     data_exchange = manager.dict()
+    lock = Lock()
 
+    with SharedMemoryManager() as smm:
+        sample_buffer = np.ones(shape=(23, BUFFER_SIZE), dtype=np.int64)
+        sl = smm.ShareableList(range(2))
+        shm = smm.SharedMemory(size=sample_buffer.nbytes)
 
-    device_engine = DeviceEngine()
-    reader_process = ReaderProcess({}, device_engine) # FileEngine("binary_ivan.dat"))
+        reader_process = ReaderProcess(engineType=EngineType.FILE, filename="binary_ivan.dat", freq=500, buffer_size = BUFFER_SIZE)
 
-    reader_process.run()
-        # reader = Process(target=run, args=(data_exchange,))
-        # reader.start()
+        reader = multiprocessing.Process(target=reader_process.run, args=(lock, sl, shm, ))
+        debug = multiprocessing.Process(target=debug_raw_data, args=(lock, sl, shm, ))
+        plot = multiprocessing.Process(target=draw_process, args=(lock, sl, shm, ))
+
+        reader.start()
+        debug.start()
+        plot.start()
+
+        reader.join()
+        debug.join()
+        plot.join()
 
