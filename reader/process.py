@@ -30,7 +30,7 @@ class ReaderProcess:
         else:
             engine = DeviceEngine()
 
-        reader = Reader(engine=engine, freq=self.options['freq'])
+        reader = Reader(engine=engine, freq=self.options['freq'], skip_sleep=self.options['skip_sleep'])
 
         frame = 0
 
@@ -54,7 +54,7 @@ class ReaderProcess:
             if (frame + 1) % 500 == 0:
                 df = pd.DataFrame(buffer.transpose())
                 df.columns = ['F7', 'Fp1', 'Fp2',	'F8', 'F3', 'Fz', 'F4', 'C3', 'Cz', 'P8', 'P7', 'Pz', 'P4', 'T3', 'P3', 'O1', 'O2', 'C4', 'T4', 'A2', 'IMPEDANCE', 'BATTERY', 'FRAME']
-                df.to_csv("data/{}.csv".format(frame + 1))
+                df.to_csv("data/{}-{}.csv".format(self.options['prefix'], frame + 1))
 
                 for i in range(20):
                     filtered = np.ndarray(shape=buffer.shape)

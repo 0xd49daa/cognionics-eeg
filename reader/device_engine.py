@@ -12,6 +12,8 @@ class DeviceEngine():
     def __init__(self):
         self.dev = EEGDevice(device_id="AI2NQ43Z", mode="b")
         self.dev.write(b'0x12')
+        self.dev.write(b'0x12')
+        self.dev.write(b'0x12')
         print(self.dev)
 
     def read(self, number_of_bytes: int) -> bytes:

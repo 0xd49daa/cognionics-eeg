@@ -9,11 +9,12 @@
 import time
 
 class Reader:
-    def __init__(self, engine, freq):
+    def __init__(self, engine, freq, skip_sleep = False):
         self.engine = engine
         self.first_read = False
         self.previous_call = 0
         self.interval = 1.0 / freq
+        self.skip_sleep = skip_sleep
 
     def read_until_first_byte(self):
         count = 0
@@ -22,7 +23,7 @@ class Reader:
             byte = self.engine.read(1)
             if byte == b'\xff':
                 if count > 0:
-                    print("count {}".format(count))
+                    print("skip before next packet start {}".format(count))
                 break
             count = count + 1
 
@@ -37,8 +38,9 @@ class Reader:
         if len(packet) != length_to_read:
             return None
 
-        if (time.perf_counter() - self.previous_call) < self.interval:
-            time.sleep((self.interval -(time.perf_counter() - self.previous_call)))
+        if not self.skip_sleep:
+            if (time.perf_counter() - self.previous_call) < self.interval:
+                time.sleep((self.interval -(time.perf_counter() - self.previous_call)))
 
         self.previous_call = time.perf_counter()
 

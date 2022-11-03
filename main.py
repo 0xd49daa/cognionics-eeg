@@ -1,3 +1,4 @@
+from sys import prefix
 from debug.debug import debug_raw_data
 from reader import ReaderProcess, AbstractEngine, EngineType
 from plot import draw_process
@@ -16,7 +17,7 @@ if __name__ == '__main__':
         sl = smm.ShareableList(range(2))
         shm = smm.SharedMemory(size=sample_buffer.nbytes)
 
-        reader_process = ReaderProcess(engineType=EngineType.FILE, filename="binary_ivan.dat", freq=500, buffer_size = BUFFER_SIZE)
+        reader_process = ReaderProcess(engineType=EngineType.DEVICE, filename="binary_ivan.dat", freq=500, buffer_size = BUFFER_SIZE, prefix = "device1", skip_sleep=True)
 
         reader = multiprocessing.Process(target=reader_process.run, args=(lock, sl, shm, ))
         debug = multiprocessing.Process(target=debug_raw_data, args=(lock, sl, shm, ))
