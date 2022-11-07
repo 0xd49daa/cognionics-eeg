@@ -12,7 +12,7 @@ class SharedMemory():
 BUFFER_SIZE = 10000
 
 reader_process = ReaderProcess(engineType=EngineType.FILE, filename="binary_ivan.dat",
-							   freq=500, sync_every=1000, buffer_size=BUFFER_SIZE)
+							   freq=500, sync_every=1000, buffer_size=BUFFER_SIZE, skip_sleep=False)
 
 lst = [1, 2]
 shm = SharedMemory()

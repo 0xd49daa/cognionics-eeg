@@ -23,4 +23,7 @@ class Channels(IntEnum):
 	A2=19
 	IMPEDANCE=20
 	BATTERY=21
-	FRAME=22
+	DEVICE_COUNT=22
+	FRAME=23
+
+COLUMNS = ['F7', 'Fp1', 'Fp2',	'F8', 'F3', 'Fz', 'F4', 'C3', 'Cz', 'P8', 'P7', 'Pz', 'P4', 'T3', 'P3', 'O1', 'O2', 'C4', 'T4', 'A2', 'IMPEDANCE', 'BATTERY', 'FRAME']

@@ -13,21 +13,21 @@ if __name__ == '__main__':
     lock = Lock()
 
     with SharedMemoryManager() as smm:
-        sample_buffer = np.ones(shape=(23, BUFFER_SIZE), dtype=np.int64)
+        sample_buffer = np.ones(shape=(24, BUFFER_SIZE), dtype=np.int64)
         sl = smm.ShareableList(range(2))
         shm = smm.SharedMemory(size=sample_buffer.nbytes)
 
-        reader_process = ReaderProcess(engineType=EngineType.DEVICE, filename="binary_ivan.dat", freq=500, buffer_size = BUFFER_SIZE, prefix = "device1", skip_sleep=True)
+        reader_process = ReaderProcess(engineType=EngineType.FILE, filename="binary_ivan.dat", freq=500, buffer_size = BUFFER_SIZE, prefix = "device1", skip_sleep=False)
 
         reader = multiprocessing.Process(target=reader_process.run, args=(lock, sl, shm, ))
-        debug = multiprocessing.Process(target=debug_raw_data, args=(lock, sl, shm, ))
+        # debug = multiprocessing.Process(target=debug_raw_data, args=(lock, sl, shm, ))
         plot = multiprocessing.Process(target=draw_process, args=(lock, sl, shm, ))
 
         reader.start()
-        debug.start()
+        # debug.start()
         plot.start()
 
         reader.join()
-        debug.join()
+        # debug.join()
         plot.join()
 

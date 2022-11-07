@@ -17,7 +17,7 @@ def debug_raw_data(lock, sl, shm):
 		# print("{} Frames per second...".format(count - prev_count))
 
 		# prev_count = count
-		if (shared_memory_array.shape[0] == 23):
+		if (shared_memory_array.shape[0] == 24):
 			print("Debug data: ", shared_memory_array.shape, shared_memory_array[Channels.IMPEDANCE, :])
 
 		if lock:

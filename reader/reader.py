@@ -7,7 +7,11 @@
 # trigger lsb
 # 66 bytes in summary
 import time
+from datetime import datetime
+from io import open
+from os import linesep
 
+FOLDER = "raw/"
 class Reader:
     def __init__(self, engine, freq, skip_sleep = False):
         self.engine = engine
@@ -15,12 +19,21 @@ class Reader:
         self.previous_call = 0
         self.interval = 1.0 / freq
         self.skip_sleep = skip_sleep
+        self.file = open(FOLDER + self.generate_filename(), "wb")
+
+    def generate_filename(self):
+        return datetime.now().strftime("%d-%m-%y-%H-%M-%S") + ".dat"
+
+    def read_and_write(self, length):
+        bytes = self.engine.read(length)
+        self.file.write(bytes)
+        return bytes
 
     def read_until_first_byte(self):
         count = 0
 
         while True:
-            byte = self.engine.read(1)
+            byte = self.read_and_write(1)
             if byte == b'\xff':
                 if count > 0:
                     print("skip before next packet start {}".format(count))
@@ -33,7 +46,7 @@ class Reader:
         length_to_read = 65
         offset = 1
 
-        packet = self.engine.read(length_to_read)
+        packet = self.read_and_write(length_to_read)
 
         if len(packet) != length_to_read:
             return None
@@ -58,6 +71,7 @@ def read_raw(packet: bytes, offset: int):
 
     raw.append(packet[offset + 60])
     raw.append(packet[offset + 61])
+    raw.append(packet[0])
 
     return raw
 

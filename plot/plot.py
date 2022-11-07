@@ -26,7 +26,7 @@ def draw_process(lock, sl, shm):
 		dim = (sl[0], sl[1])
 		shared_memory_array = np.ndarray(dim, dtype=np.int64, buffer=shm.buf)
 
-		if shared_memory_array.shape[0] != 23:
+		if shared_memory_array.shape[0] != 24:
 			plt.pause(0.25)
 			continue
 
@@ -37,9 +37,9 @@ def draw_process(lock, sl, shm):
 		channel1_data = shared_memory_array[Channels.O2, :]
 		time_data = shared_memory_array[Channels.FRAME, :] / 500
 
-		# print("shared_memory_array", shared_memory_array.shape)
-		# print("channel0_data", channel0_data.shape)
-		# print("time_data", time_data.shape)
+		print("shared_memory_array", shared_memory_array.shape)
+		print("channel0_data", channel0_data.shape)
+		print("time_data", time_data.shape)
 
 		if lock:
 			lock.release()
